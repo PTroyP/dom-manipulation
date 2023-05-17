@@ -38,3 +38,64 @@
  */
 
 // Your code goes here...
+
+const cardsContainer = document.querySelectorAll('.card');
+
+const setActiveItems = () => {
+  if (localStorage.getItem('favorites')) {
+    const ids = JSON.parse(localStorage.getItem('favorites'));
+    for (let card of cardsContainer) {
+      if (ids.cardIDs.includes(card.id)) {
+        card.style.backgroundColor = 'red';
+      }
+    }
+  } else {
+    const favs = {
+      cardIDs: [],
+    };
+    localStorage.setItem('favorites', JSON.stringify(favs));
+  }
+};
+
+setActiveItems();
+
+const storageFavsDataRaw = localStorage.getItem('favorites');
+
+const updatedFavs = JSON.parse(storageFavsDataRaw);
+
+localStorage.setItem('favorites', JSON.stringify(updatedFavs));
+
+const favsArr = updatedFavs.cardIDs;
+
+const setColor = () => {
+  favsArr.forEach((element) => {
+    let item = document.getElementById(element);
+    item.style.backgroundColor = 'red';
+  });
+};
+
+const addFav = (cardID) => {
+  favsArr.push(cardID);
+  localStorage.setItem('favorites', JSON.stringify(updatedFavs));
+};
+
+const removeFav = (cardID) => {
+  favsArr.splice(favsArr.indexOf(cardID), 1);
+  localStorage.setItem('favorites', JSON.stringify(updatedFavs));
+};
+
+const callbackFn = (e) => {
+  const item = e.target;
+  if (Array.from(item.classList).includes('card')) {
+    if (favsArr.includes(item.id)) {
+      removeFav(item.id);
+      item.style.backgroundColor = 'white';
+    } else {
+      addFav(item.id);
+      setColor();
+    }
+  }
+};
+
+const container = document.getElementsByClassName('cardsContainer');
+container[0].addEventListener('click', callbackFn);
